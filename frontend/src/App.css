@@ -1,0 +1,405 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+	--tg-primary: #2aabee;
+	--tg-secondary: #229ed9;
+	--tg-bg-primary: #17212b;
+	--tg-bg-secondary: #242f3d;
+	--tg-bg-tertiary: #0e1621;
+	--tg-text-primary: #ffffff;
+	--tg-text-secondary: #b8c5d1;
+	--tg-text-muted: #7d8e98;
+	--tg-border: #2f3b4a;
+	--tg-hover: #2f3b4a;
+	--tg-message-out: #2b5278;
+	--tg-message-in: #182533;
+	--tg-accent: #64baf1;
+}
+
+* {
+	box-sizing: border-box;
+}
+
+body {
+	margin: 0;
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+		"Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+		sans-serif;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	background-color: var(--tg-bg-primary);
+	color: var(--tg-text-primary);
+}
+
+code {
+	font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+		monospace;
+}
+
+::-webkit-scrollbar {
+	width: 6px;
+}
+
+::-webkit-scrollbar-track {
+	background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+	background: var(--tg-border);
+	border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+	background: var(--tg-text-muted);
+}
+
+#root {
+	margin: 0 auto;
+	text-align: center;
+	height: 100vh;
+}
+
+/* Telegram-like animations */
+@keyframes fadeIn {
+	from {
+		opacity: 0;
+		transform: translateY(10px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@keyframes slideIn {
+	from {
+		transform: translateX(-100%);
+	}
+	to {
+		transform: translateX(0);
+	}
+}
+
+@keyframes pulse {
+	0%,
+	100% {
+		opacity: 1;
+	}
+	50% {
+		opacity: 0.5;
+	}
+}
+
+.fade-in {
+	animation: fadeIn 0.3s ease-out;
+}
+
+.slide-in {
+	animation: slideIn 0.3s ease-out;
+}
+
+.pulse {
+	animation: pulse 2s infinite;
+}
+
+/* Telegram-like buttons */
+.tg-button {
+	background: var(--tg-primary);
+	color: white;
+	border: none;
+	border-radius: 8px;
+	padding: 8px 16px;
+	font-size: 14px;
+	font-weight: 500;
+	cursor: pointer;
+	transition: all 0.2s ease;
+}
+
+.tg-button:hover {
+	background: var(--tg-secondary);
+	transform: translateY(-1px);
+}
+
+.tg-button:active {
+	transform: translateY(0);
+}
+
+.tg-button-secondary {
+	background: transparent;
+	color: var(--tg-text-secondary);
+	border: 1px solid var(--tg-border);
+}
+
+.tg-button-secondary:hover {
+	background: var(--tg-hover);
+	color: var(--tg-text-primary);
+}
+
+/* Telegram-like inputs */
+.tg-input {
+	background: var(--tg-bg-secondary);
+	border: 1px solid var(--tg-border);
+	border-radius: 8px;
+	color: var(--tg-text-primary);
+	padding: 12px 16px;
+	font-size: 14px;
+	transition: border-color 0.2s ease;
+}
+
+.tg-input:focus {
+	outline: none;
+	border-color: var(--tg-primary);
+	box-shadow: 0 0 0 2px rgba(42, 171, 238, 0.2);
+}
+
+.tg-input::placeholder {
+	color: var(--tg-text-muted);
+}
+
+/* Telegram-like cards */
+.tg-card {
+	background: var(--tg-bg-secondary);
+	border-radius: 12px;
+	border: 1px solid var(--tg-border);
+	transition: all 0.2s ease;
+}
+
+.tg-card:hover {
+	background: var(--tg-hover);
+	transform: translateY(-2px);
+	box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+/* Message bubbles */
+.message-bubble-out {
+	background: var(--tg-message-out);
+	color: white;
+	border-radius: 18px 18px 4px 18px;
+	position: relative;
+}
+
+.message-bubble-in {
+	background: var(--tg-message-in);
+	color: var(--tg-text-primary);
+	border-radius: 18px 18px 18px 4px;
+	position: relative;
+}
+
+/* Search highlight animation */
+@keyframes searchHighlight {
+	0% {
+		background-color: rgba(255, 193, 7, 0.3);
+		transform: scale(1);
+	}
+	50% {
+		background-color: rgba(255, 193, 7, 0.6);
+		transform: scale(1.02);
+	}
+	100% {
+		background-color: rgba(255, 193, 7, 0.3);
+		transform: scale(1);
+	}
+}
+
+.search-highlight {
+	animation: searchHighlight 2s ease-in-out;
+	border: 2px solid rgba(255, 193, 7, 0.5);
+}
+
+/* Status indicators */
+.online-indicator {
+	width: 12px;
+	height: 12px;
+	background: #4caf50;
+	border-radius: 50%;
+	border: 2px solid var(--tg-bg-secondary);
+	position: absolute;
+	bottom: 0;
+	right: 0;
+}
+
+.typing-indicator {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	padding: 8px 16px;
+	color: var(--tg-text-muted);
+	font-size: 12px;
+}
+
+.typing-dots {
+	display: flex;
+	gap: 2px;
+}
+
+.typing-dot {
+	width: 4px;
+	height: 4px;
+	background: var(--tg-text-muted);
+	border-radius: 50%;
+	animation: typing 1.4s infinite;
+}
+
+.typing-dot:nth-child(2) {
+	animation-delay: 0.2s;
+}
+
+.typing-dot:nth-child(3) {
+	animation-delay: 0.4s;
+}
+
+@keyframes typing {
+	0%,
+	60%,
+	100% {
+		transform: translateY(0);
+		opacity: 0.4;
+	}
+	30% {
+		transform: translateY(-4px);
+		opacity: 1;
+	}
+}
+
+.logo {
+	height: 6em;
+	padding: 1.5em;
+	will-change: filter;
+	transition: filter 300ms;
+}
+.logo:hover {
+	filter: drop-shadow(0 0 2em #646cffaa);
+}
+.logo.react:hover {
+	filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+@keyframes logo-spin {
+	from {
+		transform: rotate(0deg);
+	}
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	a:nth-of-type(2) .logo {
+		animation: logo-spin infinite 20s linear;
+	}
+}
+
+.card {
+	padding: 2em;
+}
+
+.read-the-docs {
+	color: #888;
+}
+
+.slide-in-right {
+	animation: slideInRight 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes slideInRight {
+	from {
+		opacity: 0;
+		transform: translateX(60px) scale(0.98);
+	}
+	to {
+		opacity: 1;
+		transform: translateX(0) scale(1);
+	}
+}
+
+/* Адаптивність */
+@media (max-width: 640px) {
+	/* Мобільні пристрої */
+	.message-bubble-out,
+	.message-bubble-in {
+		max-width: 85% !important;
+		padding: 0.75rem !important;
+		font-size: 0.875rem;
+	}
+
+	.typing-indicator {
+		padding: 0.5rem 1rem;
+		font-size: 0.75rem;
+	}
+
+	.typing-dot {
+		width: 3px;
+		height: 3px;
+	}
+}
+
+@media (max-width: 768px) {
+	/* Планшети */
+	.message-bubble-out,
+	.message-bubble-in {
+		max-width: 80%;
+	}
+}
+
+/* Покращення для touch-пристроїв */
+@media (hover: none) and (pointer: coarse) {
+	button,
+	[role="button"] {
+		min-height: 44px;
+		min-width: 44px;
+	}
+
+	input,
+	textarea {
+		font-size: 16px; /* Запобігає зумі на iOS */
+	}
+}
+
+/* Темна тема для системних налаштувань */
+@media (prefers-color-scheme: dark) {
+	:root {
+		--tg-bg-primary: #0e1621;
+		--tg-bg-secondary: #17212b;
+		--tg-bg-tertiary: #242f3d;
+	}
+}
+
+/* Зменшення анімацій для користувачів з налаштуваннями доступності */
+@media (prefers-reduced-motion: reduce) {
+	* {
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.01ms !important;
+	}
+
+	.slide-in-right {
+		animation: none !important;
+	}
+}
+
+/* Медіа-запити для адаптивності */
+@media (min-width: 768px) {
+	/* На великих екранах сайдбар завжди видимий */
+	.sidebar-container {
+		transform: translateX(0) !important;
+		position: relative !important;
+		z-index: auto !important;
+		display: block !important;
+	}
+}
+
+@media (max-width: 767px) {
+	/* На малих екранах сайдбар може бути прихований */
+	.sidebar-mobile {
+		position: fixed;
+		z-index: 40;
+	}
+
+	/* На малих екранах основний контент займає всю ширину */
+	.main-content-mobile {
+		margin-left: 0;
+		width: 100%;
+	}
+}

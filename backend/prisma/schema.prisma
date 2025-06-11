@@ -1,0 +1,63 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Session {
+  id        String   @id
+  sid       String   @unique
+  data      String
+  expiresAt DateTime
+}
+
+model User {
+  id        String     @id @default(uuid())
+  email     String
+  password  String
+  name      String
+  isOnline  Boolean    @default(false)
+  lastSeen  DateTime   @default(now())
+  posts     Post[]
+  messages  Message[]
+  chatRooms ChatRoom[] @relation("UserChatRooms")
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+model Post {
+  id        String   @id @default(uuid())
+  content   String
+  author    User     @relation(fields: [authorId], references: [id])
+  authorId  String
+  createdAt DateTime @default(now())
+}
+
+model ChatRoom {
+  id        String    @id @default(uuid())
+  name      String?
+  createdBy String? // ID користувача, який створив чат
+  users     User[]    @relation("UserChatRooms")
+  messages  Message[]
+  createdAt DateTime  @default(now())
+}
+
+model Message {
+  id         String    @id @default(uuid())
+  content    String
+  sender     User      @relation(fields: [senderId], references: [id])
+  senderId   String
+  chatRoom   ChatRoom  @relation(fields: [chatRoomId], references: [id], onDelete: Cascade)
+  chatRoomId String
+  isRead     Boolean   @default(false)
+  readAt     DateTime?
+  createdAt  DateTime  @default(now())
+
+  // Поля для відповідей на повідомлення
+  replyToId String? // ID повідомлення, на яке відповідаємо
+  replyTo   Message?  @relation("MessageReplies", fields: [replyToId], references: [id], onDelete: SetNull)
+  replies   Message[] @relation("MessageReplies")
+}
