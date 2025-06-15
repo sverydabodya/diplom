@@ -3,7 +3,10 @@
 	"version": "1.0.0",
 	"main": "index.js",
 	"scripts": {
-		"dev": "npx nodemon src/server.ts"
+		"start": "npx tsc && node dist/server.js",
+		"dev": "npx nodemon src/server.ts",
+		"build": "npx tsc",
+		"postinstall": "prisma generate"
 	},
 	"author": "",
 	"license": "ISC",
