@@ -109,17 +109,6 @@ export default function ChatHeader({
 		<>
 			<div className="h-16 bg-[#17212B] border-b border-[#2F3B4A] flex-shrink-0 flex items-center px-6">
 				<div className="flex items-center space-x-4 w-full max-w-4xl mx-auto">
-					{/* Кнопка мобільного меню - тільки на малих екранах */}
-					{onMobileMenuToggle && (
-						<button
-							onClick={onMobileMenuToggle}
-							className="md:hidden w-10 h-10 rounded-full bg-[#242F3D] hover:bg-[#2F3B4A] flex items-center justify-center transition-all duration-200 text-white"
-							title="Меню"
-						>
-							☰
-						</button>
-					)}
-
 					<div className="relative">
 						<div className="w-10 h-10 rounded-full bg-[#2AABEE] flex items-center justify-center">
 							<span className="text-white text-lg font-medium">
@@ -200,7 +189,7 @@ export default function ChatHeader({
 									className="p-2 rounded-full hover:bg-red-600 transition-colors duration-200"
 									title="Видалити груповий чат"
 								>
-									видалити
+									🗑️
 								</button>
 							) : (
 								// Учасник групового чату - може вийти
@@ -209,7 +198,7 @@ export default function ChatHeader({
 									className="p-2 rounded-full hover:bg-orange-600 transition-colors duration-200"
 									title="Вийти з групового чату"
 								>
-									вийти
+									Вийти
 								</button>
 							)
 						) : (

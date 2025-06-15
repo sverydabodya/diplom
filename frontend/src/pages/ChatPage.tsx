@@ -38,13 +38,10 @@ export default function ChatPage() {
 	const updateChats = async () => {
 		try {
 			const updatedChats = await getChatsByUser();
-			// Отримуємо кількість непрочитаних повідомлень
 			const unreadData = await getUnreadCount();
 			setUnreadCounts(unreadData);
 
-			// Додатково сортуємо на frontend для надійності
 			const sortedChats = updatedChats.sort((a: Chat, b: Chat) => {
-				// Спочатку сортуємо за наявністю непрочитаних повідомлень
 				const aUnreadCount =
 					unreadData.find(
 						(c: { chatId: string; unreadCount: number }) => c.chatId === a.id
@@ -57,11 +54,9 @@ export default function ChatPage() {
 				if (aUnreadCount > 0 && bUnreadCount === 0) return -1;
 				if (aUnreadCount === 0 && bUnreadCount > 0) return 1;
 
-				// Якщо кількість непрочитаних однакова, сортуємо за актуальністю
 				const aLastMessage = a.messages?.[0];
 				const bLastMessage = b.messages?.[0];
 
-				// Якщо у чату немає повідомлень, використовуємо дату створення чату
 				const aDate = aLastMessage
 					? new Date(aLastMessage.createdAt)
 					: new Date(a.createdAt);
@@ -69,14 +64,7 @@ export default function ChatPage() {
 					? new Date(bLastMessage.createdAt)
 					: new Date(b.createdAt);
 
-				// Сортуємо за спаданням (найновіші спочатку)
 				return bDate.getTime() - aDate.getTime();
-			});
-
-			console.log("ChatPage updateChats:", {
-				chatsCount: sortedChats.length,
-				chats: sortedChats,
-				unreadData,
 			});
 
 			setChats(sortedChats);
@@ -89,17 +77,6 @@ export default function ChatPage() {
 		updateChats();
 	}, [user]);
 
-	// Логування для діагностики
-	useEffect(() => {
-		console.log("ChatPage render:", {
-			chatsCount: chats.length,
-			selectedChat: selectedChat?.id,
-			isMobileMenuOpen,
-			user: user?.id,
-		});
-	}, [chats, selectedChat, isMobileMenuOpen, user]);
-
-	// Автоматично відкриваємо чат з URL параметра
 	useEffect(() => {
 		const chatId = searchParams.get("chat");
 		if (chatId && chats.length > 0) {
@@ -107,7 +84,6 @@ export default function ChatPage() {
 		}
 	}, [searchParams, chats]);
 
-	// Автоматично закриваємо мобільне меню при переході на великий екран
 	useEffect(() => {
 		const handleResize = () => {
 			if (window.innerWidth >= 768 && isMobileMenuOpen) {
@@ -119,7 +95,6 @@ export default function ChatPage() {
 		return () => window.removeEventListener("resize", handleResize);
 	}, [isMobileMenuOpen]);
 
-	// WebSocket для оновлення кількості непрочитаних повідомлень
 	useEffect(() => {
 		if (!user) return;
 
@@ -130,22 +105,17 @@ export default function ChatPage() {
 		const ws = new WebSocket(`${import.meta.env.VITE_WSHOST}/api/chat/unread`);
 		unreadWsRef.current = ws;
 
-		ws.onopen = () => {
-			console.log("🔌 Підключено до WebSocket для непрочитаних повідомлень");
-		};
+		ws.onopen = () => {};
 
 		ws.onmessage = (event) => {
 			const data = JSON.parse(event.data);
 
-			// Оновлюємо список чатів при отриманні повідомлень про непрочитані
 			if (data.type === "unread_update") {
 				updateChats();
 			}
 		};
 
-		ws.onclose = () => {
-			console.log("❌ Зʼєднання для непрочитаних повідомлень закрите");
-		};
+		ws.onclose = () => {};
 
 		return () => {
 			ws.close();
@@ -164,13 +134,10 @@ export default function ChatPage() {
 		);
 		wsRef.current = ws;
 
-		ws.onopen = () => {
-			console.log("🔌 Підключено до WebSocket");
-		};
+		ws.onopen = () => {};
 
 		ws.onmessage = (event) => {
 			const data = JSON.parse(event.data);
-			console.log("🔔 Отримано WebSocket повідомлення:", data);
 
 			if (data.type === "new_message") {
 				const newMsg: Message = data.message;
@@ -194,7 +161,6 @@ export default function ChatPage() {
 				});
 				updateChats();
 			} else if (data.type === "message_read") {
-				console.log("📖 Отримано message_read:", data);
 				setSelectedChat((prev) => {
 					if (!prev) return prev;
 					return {
@@ -212,13 +178,11 @@ export default function ChatPage() {
 				});
 				updateChats();
 			} else if (data.type === "all_messages_read") {
-				console.log("📖 Отримано all_messages_read:", data);
 				setSelectedChat((prev) => {
 					if (!prev) return prev;
 					return {
 						...prev,
 						messages: (prev.messages || []).map((msg) => {
-							// Шукаємо оновлене повідомлення в списку
 							const updatedMessage = data.updatedMessages?.find(
 								(updated: any) => updated.id === msg.id
 							);
@@ -242,24 +206,18 @@ export default function ChatPage() {
 				}
 				updateChats();
 			} else if (data.type === "typing_start") {
-				console.log("📝 Отримано typing_start від:", data.userName);
 				if (data.userId !== user?.id) {
 					setIsTyping(true);
 					setTypingUser(data.userName);
 				}
 			} else if (data.type === "typing_stop") {
-				console.log("📝 Отримано typing_stop від:", data.userId);
 				if (data.userId !== user?.id) {
 					setIsTyping(false);
 					setTypingUser("");
 				}
 			} else if (data.type === "user_status_update") {
-				console.log("👤 Отримано user_status_update:", data);
-				// Оновлюємо список чатів для відображення зміни онлайн статусу
 				updateChats();
 			} else if (data.type === "chat_name_updated") {
-				console.log("📝 Отримано chat_name_updated:", data);
-				// Оновлюємо поточний чат, якщо це він
 				if (selectedChat?.id === data.chatId) {
 					setSelectedChat((prev) => {
 						if (!prev) return prev;
@@ -269,17 +227,12 @@ export default function ChatPage() {
 						};
 					});
 				}
-				// Оновлюємо список чатів
 				updateChats();
 			} else if (data.type === "user_added_to_chat") {
-				console.log("➕ Отримано user_added_to_chat:", data);
-				// Оновлюємо поточний чат, якщо це він
 				if (selectedChat?.id === data.chatId) {
 					handleChatUpdate();
 				}
 			} else if (data.type === "user_removed_from_chat") {
-				console.log("➖ Отримано user_removed_from_chat:", data);
-				// Оновлюємо поточний чат, якщо це він
 				if (selectedChat?.id === data.chatId) {
 					handleChatUpdate();
 				}
@@ -287,7 +240,6 @@ export default function ChatPage() {
 		};
 
 		ws.onclose = () => {
-			console.log("❌ Зʼєднання закрите");
 			setIsTyping(false);
 			setTypingUser("");
 		};
@@ -310,7 +262,7 @@ export default function ChatPage() {
 
 		setIsTyping(false);
 		setTypingUser("");
-		setReplyToMessage(null); // Скидаємо відповідь після відправки
+		setReplyToMessage(null);
 	};
 
 	const handleReplyToMessage = (message: Message) => {
@@ -324,7 +276,6 @@ export default function ChatPage() {
 	const handleTypingStart = () => {
 		if (!wsRef.current || wsRef.current.readyState !== WebSocket.OPEN) return;
 
-		console.log("🔄 Відправляю typing_start");
 		wsRef.current.send(
 			JSON.stringify({
 				type: "typing_start",
@@ -335,7 +286,6 @@ export default function ChatPage() {
 	const handleTypingStop = () => {
 		if (!wsRef.current || wsRef.current.readyState !== WebSocket.OPEN) return;
 
-		console.log("🔄 Відправляю typing_stop");
 		wsRef.current.send(
 			JSON.stringify({
 				type: "typing_stop",
@@ -377,11 +327,9 @@ export default function ChatPage() {
 	const handleDeleteChat = async (chatId: string) => {
 		try {
 			await deleteChat(chatId);
-			// Якщо видаляємо поточний чат, очищаємо його
 			if (selectedChat?.id === chatId) {
 				setSelectedChat(null);
 			}
-			// Оновлюємо список чатів
 			updateChats();
 		} catch (error) {
 			console.error("Помилка при видаленні чату:", error);
@@ -389,30 +337,24 @@ export default function ChatPage() {
 	};
 
 	const handleChatUpdate = async () => {
-		// Оновлюємо поточний чат, якщо він відкритий
 		if (selectedChat) {
 			try {
 				const updatedChat = await getChatById(selectedChat.id);
 				setSelectedChat(updatedChat);
 			} catch (error) {
 				console.error("Помилка при оновленні чату:", error);
-				// Якщо чат не знайдено (користувач вийшов), перенаправляємо на головну
 				if (error instanceof Error && error.message.includes("403")) {
 					setSelectedChat(null);
 				}
 			}
 		}
-		// Оновлюємо список чатів
 		updateChats();
 	};
 
-	// Оновлюємо онлайн статус при завантаженні сторінки
 	useEffect(() => {
 		if (user) {
-			// Позначаємо користувача як онлайн
 			updateOnlineStatus(true);
 
-			// Позначаємо користувача як офлайн при закритті сторінки
 			const handleBeforeUnload = () => {
 				updateOnlineStatus(false);
 			};
@@ -426,7 +368,6 @@ export default function ChatPage() {
 		}
 	}, [user]);
 
-	// Гаряча клавіша для пошуку (Ctrl+F)
 	useEffect(() => {
 		const handleKeyDown = (e: KeyboardEvent) => {
 			if ((e.ctrlKey || e.metaKey) && e.key === "f") {
@@ -476,18 +417,15 @@ export default function ChatPage() {
 	};
 
 	const handleSearchResultClick = (messageId: string) => {
-		// Знаходимо повідомлення в чаті
 		const messageElement = document.querySelector(
 			`[data-message-id="${messageId}"]`
 		);
 		if (messageElement) {
-			// Прокручуємо до повідомлення
 			messageElement.scrollIntoView({
 				behavior: "smooth",
 				block: "center",
 			});
 
-			// Додаємо підсвічування
 			messageElement.classList.add("search-highlight");
 			setTimeout(() => {
 				messageElement.classList.remove("search-highlight");
@@ -497,7 +435,6 @@ export default function ChatPage() {
 
 	return (
 		<div className="flex h-screen w-screen bg-[#17212B]">
-			{/* Мобільна кнопка меню - тільки на малих екранах */}
 			<div className="md:hidden fixed top-4 left-4 z-50">
 				<button
 					onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -507,7 +444,6 @@ export default function ChatPage() {
 				</button>
 			</div>
 
-			{/* Sidebar для мобільних - з overlay */}
 			<div className="md:hidden">
 				<div
 					className={`${
@@ -522,7 +458,6 @@ export default function ChatPage() {
 					/>
 				</div>
 
-				{/* Overlay для мобільного меню */}
 				{isMobileMenuOpen && (
 					<div
 						className="fixed inset-0 bg-black bg-opacity-50 z-30"
@@ -531,7 +466,6 @@ export default function ChatPage() {
 				)}
 			</div>
 
-			{/* Sidebar для десктопу - завжди видимий */}
 			<div className="hidden md:block">
 				<ChatSidebar
 					chats={chats}
@@ -541,7 +475,6 @@ export default function ChatPage() {
 				/>
 			</div>
 
-			{/* Основний контент */}
 			<div className="flex-1 h-screen flex flex-col overflow-hidden bg-[#0E1621]">
 				{selectedChat ? (
 					<>
@@ -575,7 +508,6 @@ export default function ChatPage() {
 				)}
 			</div>
 
-			{/* Модальне вікно пошуку */}
 			<ChatSearch
 				isOpen={isSearchOpen}
 				onClose={handleSearchClose}

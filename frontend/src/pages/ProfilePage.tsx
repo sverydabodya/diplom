@@ -68,11 +68,9 @@ export default function ProfilePage() {
 	const handleLogout = async () => {
 		try {
 			await signOut();
-			setUser(null); // Очищаємо стан користувача
+			setUser(null);
 			navigate("/login", { replace: true });
 		} catch (error) {
-			console.error("Помилка при виході:", error);
-			// Fallback перенаправлення
 			setUser(null);
 			navigate("/login", { replace: true });
 		}

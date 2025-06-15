@@ -96,7 +96,6 @@ export default function ChatSearch({
 	return (
 		<div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-2 sm:p-4">
 			<div className="bg-[#242F3D] rounded-xl shadow-2xl border border-[#2F3B4A] w-full max-w-sm sm:max-w-2xl max-h-[90vh] sm:max-h-[80vh] flex flex-col">
-				{/* Заголовок */}
 				<div className="flex items-center justify-between p-3 sm:p-4 border-b border-[#2F3B4A]">
 					<h2 className="text-base sm:text-lg font-semibold text-white">
 						Пошук повідомлень
@@ -109,7 +108,6 @@ export default function ChatSearch({
 					</button>
 				</div>
 
-				{/* Поле пошуку */}
 				<div className="p-3 sm:p-4 border-b border-[#2F3B4A]">
 					<div className="relative">
 						<input
@@ -128,7 +126,6 @@ export default function ChatSearch({
 					</div>
 				</div>
 
-				{/* Результати пошуку */}
 				<div className="flex-1 overflow-y-auto p-3 sm:p-4">
 					{searchQuery.trim() === "" ? (
 						<div className="text-center text-[#7D8E98] py-6 sm:py-8">
@@ -180,7 +177,6 @@ export default function ChatSearch({
 					)}
 				</div>
 
-				{/* Підказки */}
 				<div className="p-3 sm:p-4 border-t border-[#2F3B4A] bg-[#1A2332]">
 					<div className="text-xs text-[#7D8E98]">
 						💡 <strong>Підказки:</strong> Пошук працює по тексту повідомлень та

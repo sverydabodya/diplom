@@ -48,7 +48,6 @@ export default function UserSearch({ onChatCreated }: UserSearchProps) {
 		searchTimeout.current = setTimeout(async () => {
 			try {
 				const results = await searchUsers(query);
-				// Фільтруємо користувачів, які вже вибрані
 				const filteredResults = results.filter(
 					(user: User) =>
 						!selectedUsers.some((selected) => selected.id === user.id)
@@ -83,12 +82,10 @@ export default function UserSearch({ onChatCreated }: UserSearchProps) {
 		setError("");
 
 		try {
-			// Створюємо чат з першим користувачем
-			const chat = await createChat(selectedUsers[0].id);
+			const chat = await createChat([selectedUsers[0].id]);
 
-			// Додаємо інших користувачів до чату
 			for (let i = 1; i < selectedUsers.length; i++) {
-				await createChat(selectedUsers[i].id);
+				await createChat([selectedUsers[i].id]);
 			}
 
 			setSelectedUsers([]);

@@ -127,22 +127,6 @@ export default function ChatInput({
 							}
 							className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-[#242F3D] border border-[#2F3B4A] rounded-2xl text-white placeholder-[#7D8E98] focus:outline-none focus:border-[#2AABEE] focus:ring-2 focus:ring-[#2AABEE] focus:ring-opacity-20 transition-all duration-200 text-sm sm:text-base"
 						/>
-						<div className="absolute right-3 top-1/2 transform -translate-y-1/2 flex space-x-1 sm:space-x-2">
-							<button
-								type="button"
-								className="p-1 sm:p-1.5 rounded-full hover:bg-[#2F3B4A] transition-colors duration-200 text-xs"
-								title="Емодзі"
-							>
-								😊
-							</button>
-							<button
-								type="button"
-								className="p-1 sm:p-1.5 rounded-full hover:bg-[#2F3B4A] transition-colors duration-200 text-xs"
-								title="Вкласти файл"
-							>
-								📎
-							</button>
-						</div>
 					</div>
 					<button
 						type="submit"

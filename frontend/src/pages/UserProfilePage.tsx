@@ -48,7 +48,6 @@ export default function UserProfilePage() {
 		fetchUserProfile();
 	}, [userId]);
 
-	// Функція для форматування часу "останній раз бачили"
 	const getLastSeenText = (lastSeen: Date) => {
 		const lastSeenDate = new Date(lastSeen);
 		const now = new Date();
@@ -74,10 +73,8 @@ export default function UserProfilePage() {
 
 		try {
 			const chat = await createChat([currentUser.id, user.id]);
-			// Перенаправляємо на головну сторінку з відкритим чатом
 			navigate(`/?chat=${chat.id}`);
 		} catch (error) {
-			console.error("Помилка при створенні чату:", error);
 			alert("Помилка при створенні чату");
 		}
 	};

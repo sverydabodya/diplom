@@ -72,7 +72,7 @@ export async function createChat(userIds: string[], name?: string) {
 	body.userIds = userIds;
 	body.name = name;
 
-	console.log(body);
+	body;
 
 	const response = await fetchData(
 		`${import.meta.env.VITE_HOST}/api/chat/create`,

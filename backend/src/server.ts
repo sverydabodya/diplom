@@ -19,27 +19,17 @@ const sesssionConfig: expressSession.SessionOptions = {
 	resave: false,
 	saveUninitialized: false,
 	cookie: {
-		// maxAge: 60 * 60 * 1000,
 		httpOnly: true,
 		path: "/",
-		// secure: true,
 	},
-	// rolling: true,
 	store: sessionStore,
 };
 
 app.use(
 	cors({
 		origin: function (origin, callback) {
-			const allowedOrigins = [
-				"http://localhost:5173",
-				"chrome-extension://fgponpodhbmadfljofbimhhlengambbn/index.html",
-			];
-			if (
-				!origin ||
-				origin.startsWith("chrome-extension://") ||
-				allowedOrigins.includes(origin)
-			) {
+			const allowedOrigins = ["http://localhost:5173"];
+			if (allowedOrigins.includes(origin)) {
 				callback(null, true);
 			} else {
 				callback(new Error("Not allowed by CORS"));
@@ -57,3 +47,5 @@ wsRouter(app);
 app.listen(port, () => {
 	console.log("Server started on http://localhost:" + port);
 });
+
+

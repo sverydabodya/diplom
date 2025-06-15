@@ -104,20 +104,16 @@ export const getChatsByUser: RequestHandler = async (req, res, next) => {
 			},
 		});
 
-		// Сортуємо чати за актуальністю (за датою останнього повідомлення)
 		const sortedChats = chats.sort((a, b) => {
-			// Спочатку сортуємо за наявністю непрочитаних повідомлень
 			const aUnreadCount = a._count?.messages || 0;
 			const bUnreadCount = b._count?.messages || 0;
 
 			if (aUnreadCount > 0 && bUnreadCount === 0) return -1;
 			if (aUnreadCount === 0 && bUnreadCount > 0) return 1;
 
-			// Якщо кількість непрочитаних однакова, сортуємо за актуальністю
 			const aLastMessage = a.messages[0];
 			const bLastMessage = b.messages[0];
 
-			// Якщо у чату немає повідомлень, використовуємо дату створення чату
 			const aDate = aLastMessage
 				? new Date(aLastMessage.createdAt)
 				: new Date(a.createdAt);
@@ -125,7 +121,6 @@ export const getChatsByUser: RequestHandler = async (req, res, next) => {
 				? new Date(bLastMessage.createdAt)
 				: new Date(b.createdAt);
 
-			// Сортуємо за спаданням (найновіші спочатку)
 			return bDate.getTime() - aDate.getTime();
 		});
 
@@ -193,12 +188,8 @@ export const sendMessage: WebsocketRequestHandler = async (ws, req) => {
 	}
 	chatClients[chatId].push(ws);
 
-	// Оновлюємо статус користувача як онлайн
 	await updateUserOnlineStatus(user.id, true);
 
-	console.log(
-		`🔌 Клієнт підключився до чату ${chatId}. Загальна кількість: ${chatClients[chatId].length}`
-	);
 
 	ws.on("message", async (msg) => {
 		try {
@@ -300,13 +291,7 @@ export const sendMessage: WebsocketRequestHandler = async (ws, req) => {
 		chatClients[chatId] = chatClients[chatId].filter(
 			(client: WebSocket) => client !== ws
 		);
-
-		// Оновлюємо статус користувача як офлайн
 		updateUserOnlineStatus(user.id, false);
-
-		console.log(
-			`🔌 Клієнт відключився від чату ${chatId}. Залишилося: ${chatClients[chatId].length}`
-		);
 	});
 };
 

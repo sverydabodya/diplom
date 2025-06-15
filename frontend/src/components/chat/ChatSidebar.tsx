@@ -52,14 +52,6 @@ export default function ChatSidebar({
 	const startX = useRef(0);
 	const startWidth = useRef(0);
 
-	// Логування для перевірки даних
-	console.log("ChatSidebar render:", {
-		chatsCount: chats.length,
-		chats: chats,
-		selectedChat: selectedChat?.id,
-		user: user?.id,
-	});
-
 	useEffect(() => {
 		const fetchUnreadCounts = async () => {
 			try {
@@ -78,14 +70,12 @@ export default function ChatSidebar({
 		return () => clearInterval(interval);
 	}, []);
 
-	// Оновлюємо кількість непрочитаних повідомлень при зміні чатів
 	useEffect(() => {
 		if (onUnreadCountUpdate) {
 			onUnreadCountUpdate();
 		}
 	}, [chats, onUnreadCountUpdate]);
 
-	// WebSocket підключення для отримання оновлень про непрочитані повідомлення
 	useEffect(() => {
 		if (!user) return;
 
@@ -97,18 +87,12 @@ export default function ChatSidebar({
 
 		ws.onmessage = (event) => {
 			const data = JSON.parse(event.data);
-			console.log("📊 Отримано повідомлення про непрочитані в сайдбарі:", data);
 
 			if (data.type === "unread_update") {
-				console.log("🔄 Оновлюю кількість непрочитаних повідомлень в сайдбарі");
 				const fetchUnreadCounts = async () => {
 					try {
 						const counts = await getUnreadCount();
 						setUnreadCounts(counts);
-						console.log(
-							"✅ Кількість непрочитаних оновлено в сайдбарі:",
-							counts
-						);
 					} catch (error) {
 						console.error(
 							"Помилка при оновленні кількості непрочитаних:",
@@ -118,8 +102,6 @@ export default function ChatSidebar({
 				};
 				fetchUnreadCounts();
 			} else if (data.type === "user_status_update") {
-				console.log("👤 Отримано user_status_update в сайдбарі:", data);
-				// Оновлюємо список чатів для відображення зміни онлайн статусу
 				if (onUnreadCountUpdate) {
 					onUnreadCountUpdate();
 				}
@@ -171,26 +153,9 @@ export default function ChatSidebar({
 			return "Немає повідомлень";
 		}
 
-		// Беремо перше повідомлення (оскільки вони вже відсортовані за спаданням)
 		const lastMessage = chat.messages[0];
 		return lastMessage.content || "Немає повідомлень";
 	};
-
-	// const getLastMessageTime = (chat: Chat) => {
-	// 	if (!chat.createdAt) return "";
-	// 	const now = new Date();
-	// 	const diff = Math.floor((now.getTime() - chat.createdAt.getTime()) / 1000);
-
-	// 	if (diff < 60) {
-	// 		return "Тільки що";
-	// 	} else if (diff < 3600) {
-	// 		return `${Math.floor(diff / 60)} хв. тому`;
-	// 	} else if (diff < 86400) {
-	// 		return `${Math.floor(diff / 3600)} год. тому`;
-	// 	} else {
-	// 		return chat.createdAt.toLocaleDateString();
-	// 	}
-	// };
 
 	const handleLogout = async () => {
 		setIsLoggingOut(true);
@@ -233,17 +198,14 @@ export default function ChatSidebar({
 	};
 
 	const handleChatCreated = () => {
-		// Викликаємо onUnreadCountUpdate для оновлення списку чатів
 		if (onUnreadCountUpdate) {
 			onUnreadCountUpdate();
 		}
 	};
 
-	// Функція для визначення, чи є поточний користувач створювачем групового чату
 	const isCreator = (chat: Chat) => {
-		if (!chat.name) return false; // Не груповий чат
+		if (!chat.name) return false;
 
-		// Використовуємо поле createdBy для групових чатів
 		return chat.createdBy === user?.id;
 	};
 
@@ -261,12 +223,6 @@ export default function ChatSidebar({
 				/>
 				<div className="flex items-center justify-between p-4 border-b border-[#2F3B4A] flex-shrink-0">
 					<div className="flex items-center space-x-3">
-						<button
-							onClick={() => onChatSelect("home")}
-							className="w-10 h-10 rounded-full bg-[#242F3D] hover:bg-[#2F3B4A] flex items-center justify-center transition-all duration-200"
-						>
-							домів
-						</button>
 						<h2 className="text-xl font-semibold text-white">Чати</h2>
 					</div>
 					<div className="flex space-x-2">
@@ -275,13 +231,21 @@ export default function ChatSidebar({
 							className="w-10 h-10 rounded-full bg-[#2AABEE] hover:bg-[#1E8BC3] flex items-center justify-center transition-all duration-200"
 							title="Створити чат"
 						>
-							+
+							➕
+						</button>
+						<button
+							onClick={() => onChatSelect("home")}
+							className="w-10 h-10 rounded-full bg-[#242F3D] hover:bg-[#2F3B4A] flex items-center justify-center transition-all duration-200"
+							title="Повернутися на головну"
+						>
+							🏠
 						</button>
 						<button
 							onClick={() => navigate("/profile")}
 							className="w-10 h-10 rounded-full bg-[#242F3D] hover:bg-[#2F3B4A] flex items-center justify-center transition-all duration-200"
+							title="Мій профіль"
 						>
-							проф
+							👤
 						</button>
 						<button
 							onClick={handleLogout}
@@ -289,11 +253,12 @@ export default function ChatSidebar({
 							className={`w-10 h-10 rounded-full bg-[#242F3D] hover:bg-[#2F3B4A] flex items-center justify-center transition-all duration-200 ${
 								isLoggingOut ? "opacity-50 cursor-not-allowed" : ""
 							}`}
+							title="Вийти з акаунту"
 						>
 							{isLoggingOut ? (
 								<div className="w-5 h-5 border-2 border-[#2AABEE] border-t-transparent rounded-full animate-spin" />
 							) : (
-								"вихід"
+								"🚪"
 							)}
 						</button>
 					</div>
@@ -358,9 +323,7 @@ export default function ChatSidebar({
 															? "text-[#2AABEE] font-bold"
 															: "text-[#7D8E98]"
 													}`}
-												>
-													{/* {getLastMessageTime(chat)} */}
-												</span>
+												></span>
 											</div>
 											<p
 												className={`text-sm truncate ${

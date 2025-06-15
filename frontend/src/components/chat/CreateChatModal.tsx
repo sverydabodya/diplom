@@ -40,7 +40,6 @@ export default function CreateChatModal({
 				setIsLoading(true);
 				try {
 					const searchResults = await searchUsers(searchQuery);
-					// Фільтруємо користувачів, які вже вибрані
 					const filteredUsers = searchResults.filter(
 						(user: SearchUser) =>
 							!selectedUsers.some((selected) => selected.id === user.id)
@@ -61,11 +60,9 @@ export default function CreateChatModal({
 
 	const handleUserSelect = (user: SearchUser) => {
 		if (isGroupMode) {
-			// У груповому режимі додаємо користувача до вибраних
 			setSelectedUsers((prev) => [...prev, user]);
 			setUsers((prev) => prev.filter((u) => u.id !== user.id));
 		} else {
-			// У звичайному режимі створюємо чат з одним користувачем
 			handleCreateChat([user]);
 		}
 	};
@@ -93,10 +90,8 @@ export default function CreateChatModal({
 			setIsLoading(true);
 
 			if (usersToAdd.length === 1) {
-				// Створюємо чат з одним користувачем
 				await createChat([usersToAdd[0].id]);
 			} else {
-				// Створюємо груповий чат
 				const userIds = usersToAdd.map((user) => user.id);
 				const name =
 					groupChatName.trim() ||
@@ -117,14 +112,19 @@ export default function CreateChatModal({
 	if (!isOpen) return null;
 
 	return (
-		<div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+		<div
+			className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999]"
+			style={{ zIndex: 9999 }}
+		>
 			<div className="bg-[#17212B] rounded-lg p-6 w-full max-w-md max-h-[80vh] overflow-hidden">
 				<div className="flex items-center justify-between mb-4">
 					<h2 className="text-xl font-semibold text-white">
 						{isGroupMode ? "Створити груповий чат" : "Створити чат"}
 					</h2>
 					<button
-						onClick={onClose}
+						onClick={() => {
+							onClose();
+						}}
 						className="text-[#7D8E98] hover:text-white transition-colors px-2 py-1 rounded"
 					>
 						закрити

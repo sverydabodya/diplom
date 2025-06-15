@@ -28,7 +28,6 @@ export default function MessageContextMenu({
 			}
 		};
 
-		// Розраховуємо позицію меню
 		const updatePosition = () => {
 			if (!menuRef.current) return;
 
@@ -40,33 +39,27 @@ export default function MessageContextMenu({
 			let newX = x;
 			let newY = y;
 
-			// Перевіряємо, чи меню виходить за праву межу екрану
 			if (x + menuWidth > windowWidth) {
-				newX = windowWidth - menuWidth - 5; // 5px відступ від краю
+				newX = windowWidth - menuWidth - 5;
 			}
 
-			// Перевіряємо, чи меню виходить за нижню межу екрану
 			if (y + menuHeight > windowHeight) {
-				newY = windowHeight - menuHeight - 5; // 5px відступ від краю
+				newY = windowHeight - menuHeight - 5;
 			}
 
-			// Перевіряємо, чи меню виходить за ліву межу екрану
 			if (newX < 0) {
-				newX = 5; // 5px відступ від краю
+				newX = 5;
 			}
 
-			// Перевіряємо, чи меню виходить за верхню межу екрану
 			if (newY < 0) {
-				newY = 5; // 5px відступ від краю
+				newY = 5;
 			}
 
 			setPosition({ x: newX, y: newY });
 		};
 
-		// Оновлюємо позицію після рендеру меню
 		updatePosition();
 
-		// Додаємо обробник для оновлення позиції при зміні розміру вікна
 		window.addEventListener("resize", updatePosition);
 		document.addEventListener("mousedown", handleClickOutside);
 
@@ -84,9 +77,7 @@ export default function MessageContextMenu({
 				setCopySuccess(false);
 				onClose();
 			}, 1000);
-		} catch (err) {
-			console.error("Помилка при копіюванні:", err);
-		}
+		} catch (err) {}
 	};
 
 	const handleReply = () => {

@@ -28,18 +28,10 @@ model User {
   updatedAt DateTime   @updatedAt
 }
 
-model Post {
-  id        String   @id @default(uuid())
-  content   String
-  author    User     @relation(fields: [authorId], references: [id])
-  authorId  String
-  createdAt DateTime @default(now())
-}
-
 model ChatRoom {
   id        String    @id @default(uuid())
   name      String?
-  createdBy String? // ID користувача, який створив чат
+  createdBy String? 
   users     User[]    @relation("UserChatRooms")
   messages  Message[]
   createdAt DateTime  @default(now())
@@ -56,8 +48,15 @@ model Message {
   readAt     DateTime?
   createdAt  DateTime  @default(now())
 
-  // Поля для відповідей на повідомлення
-  replyToId String? // ID повідомлення, на яке відповідаємо
+  replyToId String? 
   replyTo   Message?  @relation("MessageReplies", fields: [replyToId], references: [id], onDelete: SetNull)
   replies   Message[] @relation("MessageReplies")
+}
+
+model Post {
+  id        String   @id @default(uuid())
+  content   String
+  author    User     @relation(fields: [authorId], references: [id])
+  authorId  String
+  createdAt DateTime @default(now())
 }

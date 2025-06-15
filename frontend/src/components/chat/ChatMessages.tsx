@@ -47,12 +47,10 @@ export default function ChatMessages({
 		messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
 	}, [messages, isTyping]);
 
-	// Очищаємо readMessages при зміні чату
 	useEffect(() => {
 		setReadMessages(new Set());
 	}, [chatId]);
 
-	// Intersection Observer для автоматичного позначення повідомлень як прочитаних
 	useEffect(() => {
 		const observer = new IntersectionObserver(
 			(entries) => {
@@ -60,7 +58,6 @@ export default function ChatMessages({
 					if (entry.isIntersecting) {
 						const messageId = entry.target.getAttribute("data-message-id");
 						if (messageId && !readMessages.has(messageId)) {
-							// Позначаємо повідомлення як прочитане
 							handleMessageRead(messageId);
 							setReadMessages((prev) => new Set(prev).add(messageId));
 						}
@@ -70,11 +67,10 @@ export default function ChatMessages({
 			{
 				root: null,
 				rootMargin: "0px",
-				threshold: 0.5, // Повідомлення вважається видимим, коли 50% його видно
+				threshold: 0.5,
 			}
 		);
 
-		// Додаємо спостерігач до всіх непрочитаних повідомлень від інших користувачів
 		messageRefs.current.forEach((element, messageId) => {
 			const senderId = element.getAttribute("data-sender-id");
 			const isRead = element.getAttribute("data-is-read") === "true";
@@ -93,12 +89,8 @@ export default function ChatMessages({
 		};
 	}, [messages, currentUserId]);
 
-	// Функція для позначення повідомлення як прочитаного
 	const handleMessageRead = async (messageId: string) => {
 		try {
-			console.log(
-				`👁️ Повідомлення ${messageId} потрапило в viewport - позначаю як прочитане`
-			);
 			await markMessageAsRead(messageId);
 		} catch (error) {
 			console.error(
@@ -108,7 +100,6 @@ export default function ChatMessages({
 		}
 	};
 
-	// Функція для збереження ref повідомлення
 	const setMessageRef = (element: HTMLDivElement | null, messageId: string) => {
 		if (element) {
 			messageRefs.current.set(messageId, element);
@@ -117,26 +108,16 @@ export default function ChatMessages({
 		}
 	};
 
-	// Позначаємо всі повідомлення як переглянуті при відкритті чату
 	useEffect(() => {
 		const markMessagesAsRead = async () => {
 			try {
-				// Позначаємо тільки повідомлення від інших користувачів
 				const unreadMessages = messages.filter(
 					(msg) => msg.sender.id !== currentUserId && !msg.isRead
 				);
 
-				console.log(
-					`🔍 Знайдено ${unreadMessages.length} непрочитаних повідомлень від інших користувачів в чаті ${chatId}`
-				);
-
 				if (unreadMessages.length > 0) {
-					// Додаємо невелику затримку, щоб користувач встиг побачити повідомлення
 					setTimeout(async () => {
 						try {
-							console.log(
-								`⏰ Позначаю ${unreadMessages.length} повідомлень як прочитані в чаті ${chatId}`
-							);
 							await markAllMessagesAsRead(chatId);
 						} catch (error) {
 							console.error(
@@ -144,7 +125,7 @@ export default function ChatMessages({
 								error
 							);
 						}
-					}, 2000); // Збільшуємо затримку до 2 секунд
+					}, 2000);
 				}
 			} catch (error) {
 				console.error(
@@ -238,7 +219,6 @@ export default function ChatMessages({
 		try {
 			setIsDeleting(messageId);
 			await deleteMessage(chatId, messageId);
-			// Не викликаємо onMessageDelete тут, оскільки WebSocket сам оновить стан
 			setContextMenu(null);
 		} catch (error) {
 			console.error("Помилка при видаленні повідомлення:", error);
@@ -257,7 +237,6 @@ export default function ChatMessages({
 		);
 	};
 
-	// Групуємо повідомлення за датою
 	const groupMessagesByDate = (messages: Message[]) => {
 		const groups: { [key: string]: Message[] } = {};
 
@@ -275,7 +254,6 @@ export default function ChatMessages({
 	const filteredMessages = filterMessages(messages, searchQuery);
 	const messageGroups = groupMessagesByDate(filteredMessages);
 
-	// Підсвічуємо текст пошуку
 	const highlightText = (text: string, query: string) => {
 		if (!query.trim()) return text;
 
@@ -331,7 +309,6 @@ export default function ChatMessages({
 									data-sender-id={msg.sender.id}
 									data-is-read={msg.isRead}
 									onContextMenu={(e) => {
-										// Дозволяємо контекстне меню для всіх повідомлень
 										handleContextMenu(e, msg.id, msg.content);
 									}}
 								>
@@ -342,7 +319,6 @@ export default function ChatMessages({
 												: "message-bubble-in"
 										} relative group transition-all duration-200 hover:opacity-90`}
 									>
-										{/* Показуємо відповідь на повідомлення */}
 										{msg.replyTo && (
 											<div className="mb-2 p-2 bg-[#1A2332] rounded-lg border-l-2 border-[#2AABEE]">
 												<div className="flex items-center space-x-2 mb-1">

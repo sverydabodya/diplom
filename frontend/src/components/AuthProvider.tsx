@@ -23,7 +23,6 @@ export default function AuthProvider({ children }: PropsWithChildren) {
 			const loggedInUser = await getLoggedInUser();
 			setUser(loggedInUser);
 		} catch (error) {
-			console.log("Користувач не авторизований:", error);
 			setUser(null);
 		} finally {
 			setLoading(false);

@@ -58,13 +58,11 @@ export default function GroupChatMenu({
 				setIsSearching(true);
 				try {
 					const results = await searchUsers(searchQuery);
-					// Фільтруємо користувачів, які вже в чаті
 					const filteredResults = results.filter(
 						(result: User) => !chat.users.some((user) => user.id === result.id)
 					);
 					setSearchResults(filteredResults);
 				} catch (error) {
-					console.error("Помилка при пошуку користувачів:", error);
 				} finally {
 					setIsSearching(false);
 				}
@@ -86,7 +84,6 @@ export default function GroupChatMenu({
 			onChatUpdate();
 			onClose();
 		} catch (error) {
-			console.error("Помилка при оновленні назви чату:", error);
 			alert("Помилка при оновленні назви чату");
 		} finally {
 			setIsLoading(false);
@@ -102,7 +99,6 @@ export default function GroupChatMenu({
 			onChatUpdate();
 			onClose();
 		} catch (error) {
-			console.error("Помилка при додаванні користувача:", error);
 			alert("Помилка при додаванні користувача");
 		} finally {
 			setIsLoading(false);
@@ -126,7 +122,6 @@ export default function GroupChatMenu({
 			onChatUpdate();
 			onClose();
 		} catch (error) {
-			console.error("Помилка при видаленні користувача:", error);
 			alert("Помилка при видаленні користувача");
 		} finally {
 			setIsLoading(false);
@@ -135,7 +130,7 @@ export default function GroupChatMenu({
 
 	const handleOpenProfile = (userId: string) => {
 		navigate(`/user-profile/${userId}`);
-		onClose(); // Закриваємо меню після переходу
+		onClose();
 	};
 
 	if (!isOpen) return null;
@@ -155,7 +150,6 @@ export default function GroupChatMenu({
 					</button>
 				</div>
 
-				{/* Назва чату */}
 				<div className="mb-6">
 					<h3 className="text-sm font-medium text-[#B8C5D1] mb-2">
 						Назва чату:
@@ -201,7 +195,6 @@ export default function GroupChatMenu({
 					)}
 				</div>
 
-				{/* Учасники чату */}
 				<div className="mb-6">
 					<h3 className="text-sm font-medium text-[#B8C5D1] mb-2">
 						Учасники ({chat.users.length}):
@@ -251,7 +244,6 @@ export default function GroupChatMenu({
 					</div>
 				</div>
 
-				{/* Додавання користувачів (тільки для створювача) */}
 				{isCreator && (
 					<div className="mb-4">
 						<h3 className="text-sm font-medium text-[#B8C5D1] mb-2">
