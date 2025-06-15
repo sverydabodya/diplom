@@ -28,7 +28,10 @@ const sesssionConfig: expressSession.SessionOptions = {
 app.use(
 	cors({
 		origin: function (origin, callback) {
-			const allowedOrigins = ["http://localhost:5173"];
+			const allowedOrigins = [
+				"http://localhost:5173",
+				"https://diplom-frontend-z9mo.onrender.com",
+			];
 			if (allowedOrigins.includes(origin)) {
 				callback(null, true);
 			} else {
@@ -47,5 +50,3 @@ wsRouter(app);
 app.listen(port, () => {
 	console.log("Server started on http://localhost:" + port);
 });
-
-
