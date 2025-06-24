@@ -105,19 +105,19 @@ export default function ChatHeader({
 		}
 	};
 
+	// Додаю функцію для відмінювання
+	function getUchastnykWord(count: number) {
+		if (count % 10 === 1 && count % 100 !== 11) return "учасник";
+		if ([2, 3, 4].includes(count % 10) && ![12, 13, 14].includes(count % 100))
+			return "учасники";
+		return "учасників";
+	}
+
 	return (
 		<>
 			<div className="h-16 bg-[#17212B] border-b border-[#2F3B4A] flex-shrink-0 flex items-center px-6">
 				<div className="flex items-center space-x-4 w-full max-w-4xl mx-auto">
 					<div className="relative">
-						<div className="w-10 h-10 rounded-full bg-[#2AABEE] flex items-center justify-center">
-							<span className="text-white text-lg font-medium">
-								{chat.name
-									? chat.name.charAt(0).toUpperCase()
-									: otherUser?.name?.charAt(0).toUpperCase() || "Ч"}
-							</span>
-						</div>
-						{/* Індикатор онлайн статусу тільки для приватних чатів */}
 						{!chat.name && otherUser?.isOnline && (
 							<div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-[#17212B]"></div>
 						)}
@@ -138,23 +138,20 @@ export default function ChatHeader({
 						>
 							{chat.name ? chat.name : otherUser?.name}
 						</h2>
-						<div className="flex items-center space-x-2">
+						<div className="flex justify-center space-x-2">
 							{chat.name ? (
-								// Для групових чатів показуємо кількість учасників
 								<>
 									<div className="w-2 h-2 bg-blue-500 rounded-full"></div>
 									<p className="text-sm text-[#7D8E98]">
-										{chat.users.length} учасників
+										{chat.users.length} {getUchastnykWord(chat.users.length)}
 									</p>
 								</>
 							) : otherUser?.isOnline ? (
-								// Для приватних чатів показуємо онлайн статус
 								<>
 									<div className="w-2 h-2 bg-green-500 rounded-full"></div>
 									<p className="text-sm text-green-400">Онлайн</p>
 								</>
 							) : otherUser?.lastSeen ? (
-								// Для приватних чатів показуємо час останнього перегляду
 								<>
 									<div className="w-2 h-2 bg-gray-500 rounded-full"></div>
 									<p className="text-sm text-[#7D8E98]">
@@ -162,7 +159,6 @@ export default function ChatHeader({
 									</p>
 								</>
 							) : (
-								// Для приватних чатів показуємо офлайн
 								<>
 									<div className="w-2 h-2 bg-gray-500 rounded-full"></div>
 									<p className="text-sm text-[#7D8E98]">Офлайн</p>
@@ -171,49 +167,44 @@ export default function ChatHeader({
 						</div>
 					</div>
 					<div className="flex space-x-2">
-						{/* Кнопка пошуку для всіх чатів */}
 						<button
 							onClick={onSearchClick}
-							className="p-2 rounded-full hover:bg-[#2F3B4A] transition-colors duration-200"
+							className="big-header-btn hover:bg-[#2F3B4A] transition-colors duration-200"
 							title="Пошук повідомлень"
 						>
 							🔍
 						</button>
 
 						{chat.name ? (
-							// Груповий чат
 							isCreator() ? (
-								// Створитель групового чату - може видалити
 								<button
 									onClick={handleDeleteChat}
-									className="p-2 rounded-full hover:bg-red-600 transition-colors duration-200"
+									className="big-header-btn hover:bg-red-600 transition-colors duration-200"
 									title="Видалити груповий чат"
 								>
 									🗑️
 								</button>
 							) : (
-								// Учасник групового чату - може вийти
 								<button
 									onClick={handleLeaveGroupChat}
-									className="p-2 rounded-full hover:bg-orange-600 transition-colors duration-200"
+									className="big-header-btn hover:bg-orange-600 transition-colors duration-200"
 									title="Вийти з групового чату"
 								>
 									Вийти
 								</button>
 							)
 						) : (
-							// Приватний чат - кнопка профілю та видалення
 							<>
 								<button
 									onClick={handleOpenProfile}
-									className="p-2 rounded-full hover:bg-[#2F3B4A] transition-colors duration-200"
+									className="big-header-btn hover:bg-[#2F3B4A] transition-colors duration-200"
 									title="Переглянути профіль"
 								>
 									профіль
 								</button>
 								<button
 									onClick={handleDeleteChat}
-									className="p-2 rounded-full hover:bg-red-600 transition-colors duration-200"
+									className="big-header-btn hover:bg-red-600 transition-colors duration-200"
 									title="Видалити чат"
 								>
 									видалити

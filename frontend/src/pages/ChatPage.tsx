@@ -434,11 +434,12 @@ export default function ChatPage() {
 	};
 
 	return (
-		<div className="flex h-screen w-screen bg-[#17212B]">
+		<div className="flex h-screen bg-[#0E1621] text-white">
+			{/* Кнопка для відкриття/закриття меню на мобільних */}
 			<div className="md:hidden fixed top-4 left-4 z-50">
 				<button
 					onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-					className="w-10 h-10 rounded-full bg-[#2AABEE] hover:bg-[#1E8BC3] flex items-center justify-center transition-all duration-200 text-white"
+					className="w-16 h-16 rounded-full bg-[#2AABEE] hover:bg-[#1E8BC3] flex items-center justify-center transition-all duration-200 text-white text-3xl shadow-lg big-header-btn"
 				>
 					{isMobileMenuOpen ? "✕" : "☰"}
 				</button>

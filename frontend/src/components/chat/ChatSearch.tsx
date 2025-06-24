@@ -176,13 +176,6 @@ export default function ChatSearch({
 						</div>
 					)}
 				</div>
-
-				<div className="p-3 sm:p-4 border-t border-[#2F3B4A] bg-[#1A2332]">
-					<div className="text-xs text-[#7D8E98]">
-						💡 <strong>Підказки:</strong> Пошук працює по тексту повідомлень та
-						іменах відправників
-					</div>
-				</div>
 			</div>
 		</div>
 	);

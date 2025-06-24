@@ -22,7 +22,7 @@ export const searchUsers: RequestHandler = async (req, res, next) => {
 					{ name: { contains: query, mode: "insensitive" } },
 					{ email: { contains: query, mode: "insensitive" } },
 				],
-				NOT: { id: user.id }, // Виключаємо поточного користувача
+				NOT: { id: user.id }, 
 			},
 			select: {
 				id: true,

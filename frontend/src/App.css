@@ -177,13 +177,16 @@ code {
 	background: var(--tg-message-out);
 	color: white;
 	border-radius: 18px 18px 4px 18px;
+	padding: 0.75rem;
 	position: relative;
+	margin: 5px;
 }
 
 .message-bubble-in {
 	background: var(--tg-message-in);
 	color: var(--tg-text-primary);
 	border-radius: 18px 18px 18px 4px;
+	padding: 0.75rem;
 	position: relative;
 }
 
@@ -402,4 +405,11 @@ code {
 		margin-left: 0;
 		width: 100%;
 	}
+}
+
+
+.big-header-btn {
+	padding: 0.6rem !important;
+	font-size: 1rem !important;
+	border-radius: 9999px !important;
 }

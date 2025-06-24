@@ -44,13 +44,16 @@ export default function LoginPage() {
 				<div className="absolute -bottom-40 -left-40 w-80 h-80 bg-[#229ED9] rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse animation-delay-2000"></div>
 			</div>
 
-			<div className="container mx-auto max-w-sm">
-				<div className="w-full p-8 rounded-2xl bg-[#242F3D]/90 backdrop-blur-sm border border-[#2F3B4A]/50 shadow-2xl fade-in relative z-10">
+			<div className=" mx-auto max-w-sm ">
+				<div
+					className="w-full p-8 rounded-2xl bg-[#242F3D]/90 backdrop-blur-sm border border-[#2F3B4A]/50 shadow-2xl fade-in relative z-10  "
+					style={{ padding: "1.5rem", borderRadius: "1rem" }}
+				>
 					<div className="text-center mb-8">
 						<div className="w-20 h-20 bg-gradient-to-br from-[#2AABEE] to-[#229ED9] rounded-full mx-auto mb-4 flex items-center justify-center shadow-lg transform hover:scale-110 transition-transform duration-300 animate-float">
 							Вхід
 						</div>
-						<h1 className="text-3xl font-bold text-white mb-2">
+						<h1 className="text-xl font-bold text-white mb-2">
 							Ласкаво просимо
 						</h1>
 						<p className="text-[#7D8E98]">Увійдіть до вашого акаунту</p>
@@ -62,7 +65,7 @@ export default function LoginPage() {
 						</div>
 					)}
 
-					<form onSubmit={handleSubmit} className="space-y-6">
+					<form onSubmit={handleSubmit} className="space-y-6 ">
 						<div className="group">
 							<label
 								htmlFor="email"
@@ -79,6 +82,7 @@ export default function LoginPage() {
 									onChange={(e) => setEmail(e.target.value)}
 									required
 									className="w-full pl-10 pr-4 py-3 rounded-xl bg-[#17212B]/80 backdrop-blur-sm border border-[#2F3B4A] !text-white placeholder-[#7D8E98] focus:outline-none focus:border-[#2AABEE] focus:ring-2 focus:ring-[#2AABEE] focus:ring-opacity-20 transition-all duration-200 hover:border-[#3F4B5A]"
+									style={{padding: '0.3rem', borderRadius: ".3rem"}}
 									placeholder="Введіть ваш email"
 								/>
 							</div>
@@ -96,6 +100,7 @@ export default function LoginPage() {
 								value={password}
 								onChange={(e) => setPassword(e.target.value)}
 								placeholder="Введіть ваш пароль"
+								
 								required
 							/>
 						</div>
@@ -106,6 +111,7 @@ export default function LoginPage() {
 							className={`w-full py-3 rounded-xl bg-gradient-to-r from-[#2AABEE] to-[#229ED9] text-white font-medium hover:from-[#229ED9] hover:to-[#1E8BC3] transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl btn-ripple ${
 								isLoading ? "opacity-50 cursor-not-allowed" : ""
 							}`}
+							style={{marginTop: "1rem", borderRadius: ".4rem"}}
 						>
 							{isLoading ? (
 								<div className="flex items-center justify-center">

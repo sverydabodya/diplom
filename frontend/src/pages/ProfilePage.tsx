@@ -12,11 +12,9 @@ export default function ProfilePage() {
 	const [success, setSuccess] = useState("");
 	const [isLoading, setIsLoading] = useState(false);
 
-	// Форма редагування профілю
 	const [name, setName] = useState(user?.name || "");
 	const [email, setEmail] = useState(user?.email || "");
 
-	// Форма зміни паролю
 	const [currentPassword, setCurrentPassword] = useState("");
 	const [newPassword, setNewPassword] = useState("");
 	const [confirmPassword, setConfirmPassword] = useState("");

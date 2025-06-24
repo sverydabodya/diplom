@@ -49,8 +49,11 @@ export default function RegisterPage() {
 				<div className="absolute -bottom-40 -left-40 w-80 h-80 bg-[#229ED9] rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse animation-delay-2000"></div>
 			</div>
 
-			<div className="container mx-auto max-w-sm">
-				<div className="w-full p-8 rounded-2xl bg-[#242F3D]/90 backdrop-blur-sm border border-[#2F3B4A]/50 shadow-2xl fade-in relative z-10">
+			<div className=" mx-auto max-w-sm">
+				<div
+					className="w-full p-8 rounded-2xl bg-[#242F3D]/90 backdrop-blur-sm border border-[#2F3B4A]/50 shadow-2xl fade-in relative z-10"
+					style={{ padding: "1.5rem", borderRadius: "1rem" }}
+				>
 					<div className="text-center mb-8">
 						<div className="w-20 h-20 bg-gradient-to-br from-[#2AABEE] to-[#229ED9] rounded-full mx-auto mb-4 flex items-center justify-center shadow-lg transform hover:scale-110 transition-transform duration-300 animate-float">
 							Реєстрація
@@ -75,21 +78,6 @@ export default function RegisterPage() {
 								Ім'я
 							</label>
 							<div className="relative">
-								<div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-									<svg
-										className="w-5 h-5 text-[#7D8E98] group-focus-within:text-[#2AABEE] transition-colors duration-200"
-										fill="none"
-										stroke="currentColor"
-										viewBox="0 0 24 24"
-									>
-										<path
-											strokeLinecap="round"
-											strokeLinejoin="round"
-											strokeWidth={2}
-											d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-										/>
-									</svg>
-								</div>
 								<input
 									id="name"
 									type="text"
@@ -97,6 +85,7 @@ export default function RegisterPage() {
 									onChange={(e) => setName(e.target.value)}
 									required
 									className="w-full pl-10 pr-4 py-3 rounded-xl bg-[#17212B]/80 backdrop-blur-sm border border-[#2F3B4A] !text-white placeholder-[#7D8E98] focus:outline-none focus:border-[#2AABEE] focus:ring-2 focus:ring-[#2AABEE] focus:ring-opacity-20 transition-all duration-200 hover:border-[#3F4B5A]"
+									style={{ padding: "0.3rem", borderRadius: ".3rem" }}
 									placeholder="Введіть ваше ім'я"
 								/>
 							</div>
@@ -118,6 +107,7 @@ export default function RegisterPage() {
 									onChange={(e) => setEmail(e.target.value)}
 									required
 									className="w-full pl-10 pr-4 py-3 rounded-xl bg-[#17212B]/80 backdrop-blur-sm border border-[#2F3B4A] !text-white placeholder-[#7D8E98] focus:outline-none focus:border-[#2AABEE] focus:ring-2 focus:ring-[#2AABEE] focus:ring-opacity-20 transition-all duration-200 hover:border-[#3F4B5A]"
+									style={{ padding: "0.3rem", borderRadius: ".3rem" }}
 									placeholder="Введіть ваш email"
 								/>
 							</div>
@@ -161,6 +151,7 @@ export default function RegisterPage() {
 							className={`w-full py-3 rounded-xl bg-gradient-to-r from-[#2AABEE] to-[#229ED9] text-white font-medium hover:from-[#229ED9] hover:to-[#1E8BC3] transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl btn-ripple ${
 								isLoading ? "opacity-50 cursor-not-allowed" : ""
 							}`}
+							style={{ marginTop: "1rem", borderRadius: ".4rem" }}
 						>
 							{isLoading ? (
 								<div className="flex items-center justify-center">

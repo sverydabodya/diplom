@@ -287,8 +287,11 @@ export default function ChatMessages({
 			<div className="space-y-4 max-w-4xl mx-auto">
 				{Object.entries(messageGroups).map(([date, dateMessages]) => (
 					<div key={date}>
-						<div className="flex justify-center mb-4">
-							<div className="bg-[#242F3D] px-3 py-1 rounded-full text-xs text-[#7D8E98]">
+						<div className="flex justify-center mb-4 mt-5" style={{ marginTop: "0.5rem" }}>
+							<div
+								className="bg-[#242F3D] px-3 py-1 rounded-full text-xs text-[#7D8E98]"
+								style={{ padding: "0.2rem" }}
+							>
 								{date}
 							</div>
 						</div>
@@ -313,14 +316,14 @@ export default function ChatMessages({
 									}}
 								>
 									<div
-										className={`max-w-[85%] sm:max-w-[70%] p-3 sm:p-4 ${
+										className={`max-w-[85%] sm:max-w-[70%] !p-5 ${
 											msg.sender.id === currentUserId
 												? "message-bubble-out"
 												: "message-bubble-in"
-										} relative group transition-all duration-200 hover:opacity-90`}
+										} relative group transition-all duration-200 hover:opacity-90 `}
 									>
 										{msg.replyTo && (
-											<div className="mb-2 p-2 bg-[#1A2332] rounded-lg border-l-2 border-[#2AABEE]">
+											<div className="mb-2 p-2 bg-[#1A2332] rounded-lg border-l-2 border-[#2AABEE] ">
 												<div className="flex items-center space-x-2 mb-1">
 													<span className="text-[#2AABEE] text-xs">↩️</span>
 													<span className="text-[#7D8E98] text-xs">
@@ -341,19 +344,23 @@ export default function ChatMessages({
 										<p className="text-sm leading-relaxed whitespace-pre-wrap break-words text-left">
 											{highlightText(msg.content, searchQuery)}
 										</p>
-										<div className="flex items-center justify-end mt-2 space-x-1">
-											<p className="text-xs opacity-70">
+										<div className="flex items-center justify-end mt-2">
+											<p
+												className="text-xs opacity-70"
+												style={{ marginRight: "0.4rem" }}
+											>
 												{formatTime(msg.createdAt)}
 											</p>
 											{msg.sender.id === currentUserId && (
 												<div
-													className="flex items-center space-x-1"
+													className="flex items-center"
 													title={getReadStatusText(msg)}
 												>
 													<span
 														className={`text-xs ${
 															msg.isRead ? "text-green-400" : "text-blue-300"
 														}`}
+														style={{ marginRight: "0.2rem" }}
 													>
 														✓
 													</span>
