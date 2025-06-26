@@ -7,6 +7,7 @@ import {
 	addUserToChat,
 	removeUserFromChat,
 } from "../../network/chat_api";
+import UserProfileModal from "../UserProfileModal";
 
 interface User {
 	id: string;
@@ -24,6 +25,7 @@ interface GroupChatMenuProps {
 		createdBy?: string;
 	};
 	onChatUpdate: () => void;
+	onOpenProfile: (userId: string) => void;
 }
 
 export default function GroupChatMenu({
@@ -31,6 +33,7 @@ export default function GroupChatMenu({
 	onClose,
 	chat,
 	onChatUpdate,
+	onOpenProfile,
 }: GroupChatMenuProps) {
 	const { user } = useAuth();
 	const navigate = useNavigate();
@@ -129,15 +132,18 @@ export default function GroupChatMenu({
 	};
 
 	const handleOpenProfile = (userId: string) => {
-		navigate(`/user-profile/${userId}`);
 		onClose();
+		setTimeout(() => onOpenProfile(userId), 200);
 	};
 
 	if (!isOpen) return null;
 
 	return (
-		<div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-			<div className="bg-[#17212B] rounded-lg p-6 w-full max-w-md max-h-[80vh] overflow-hidden">
+		<div className="modal-center" style={{ zIndex: "99999", padding: "1rem" }}>
+			<div
+				className="bg-[#17212B] rounded-lg p-6 w-full max-w-md max-h-[80vh] overflow-hidden"
+				style={{ padding: "1rem" }}
+			>
 				<div className="flex items-center justify-between mb-4">
 					<h2 className="text-xl font-semibold text-white">
 						Управління груповим чатом
@@ -146,7 +152,7 @@ export default function GroupChatMenu({
 						onClick={onClose}
 						className="text-[#7D8E98] hover:text-white transition-colors px-2 py-1 rounded"
 					>
-						закрити
+						✕
 					</button>
 				</div>
 
@@ -204,18 +210,13 @@ export default function GroupChatMenu({
 							<div
 								key={user.id}
 								className="flex items-center justify-between bg-[#242F3D] p-3 rounded-lg"
+								style={{ marginTop: "0.5rem" }}
 							>
 								<div className="flex items-center space-x-3">
-									<div className="w-8 h-8 bg-[#2AABEE] rounded-full flex items-center justify-center">
-										<span className="text-white text-sm font-medium">
-											{user.name.charAt(0).toUpperCase()}
-										</span>
-									</div>
 									<div>
 										<p className="text-white text-sm font-medium">
 											{user.name}
 										</p>
-										<p className="text-[#7D8E98] text-xs">{user.email}</p>
 									</div>
 								</div>
 								<div className="flex items-center space-x-2">
@@ -256,11 +257,6 @@ export default function GroupChatMenu({
 							onChange={(e) => setSearchQuery(e.target.value)}
 							className="w-full bg-[#242F3D] border border-[#2F3B4A] rounded-lg px-4 py-2 text-white placeholder-[#7D8E98] focus:outline-none focus:border-[#2AABEE] mb-2"
 						/>
-						{isSearching && (
-							<div className="flex items-center justify-center py-2">
-								<div className="w-5 h-5 border-2 border-[#2AABEE] border-t-transparent rounded-full animate-spin" />
-							</div>
-						)}
 						{searchResults.length > 0 && (
 							<div className="space-y-2 max-h-32 overflow-y-auto">
 								{searchResults.map((user) => (
@@ -269,11 +265,6 @@ export default function GroupChatMenu({
 										className="flex items-center justify-between bg-[#242F3D] p-2 rounded-lg"
 									>
 										<div className="flex items-center space-x-2">
-											<div className="w-6 h-6 bg-[#2AABEE] rounded-full flex items-center justify-center">
-												<span className="text-white text-xs font-medium">
-													{user.name.charAt(0).toUpperCase()}
-												</span>
-											</div>
 											<span className="text-white text-sm">{user.name}</span>
 										</div>
 										<div className="flex items-center space-x-2">

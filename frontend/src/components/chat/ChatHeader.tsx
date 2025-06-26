@@ -3,6 +3,7 @@ import { leaveGroupChat } from "../../network/chat_api";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import GroupChatMenu from "./GroupChatMenu";
+import UserProfileModal from "../UserProfileModal";
 
 interface ChatHeaderProps {
 	chat: {
@@ -28,6 +29,7 @@ export default function ChatHeader({
 	const { user } = useAuth();
 	const [isGroupMenuOpen, setIsGroupMenuOpen] = useState(false);
 	const navigate = useNavigate();
+	const [profileUserId, setProfileUserId] = useState<string | null>(null);
 
 	// Знаходимо іншого користувача в чаті
 	const otherUser = chat.users.find((u: any) => u.id !== user?.id);
@@ -101,7 +103,7 @@ export default function ChatHeader({
 
 	const handleOpenProfile = () => {
 		if (otherUser) {
-			navigate(`/user-profile/${otherUser.id}`);
+			setProfileUserId(otherUser.id);
 		}
 	};
 
@@ -112,6 +114,11 @@ export default function ChatHeader({
 			return "учасники";
 		return "учасників";
 	}
+
+	const openProfileFromGroupMenu = (userId: string) => {
+		setIsGroupMenuOpen(false);
+		setTimeout(() => setProfileUserId(userId), 200); // невелика затримка для плавності
+	};
 
 	return (
 		<>
@@ -200,14 +207,14 @@ export default function ChatHeader({
 									className="big-header-btn hover:bg-[#2F3B4A] transition-colors duration-200"
 									title="Переглянути профіль"
 								>
-									профіль
+									👤
 								</button>
 								<button
 									onClick={handleDeleteChat}
 									className="big-header-btn hover:bg-red-600 transition-colors duration-200"
 									title="Видалити чат"
 								>
-									видалити
+									🗑️
 								</button>
 							</>
 						)}
@@ -222,6 +229,15 @@ export default function ChatHeader({
 					onClose={() => setIsGroupMenuOpen(false)}
 					chat={chat}
 					onChatUpdate={handleChatUpdate}
+					onOpenProfile={openProfileFromGroupMenu}
+				/>
+			)}
+
+			{profileUserId && (
+				<UserProfileModal
+					userId={profileUserId}
+					isOpen={!!profileUserId}
+					onClose={() => setProfileUserId(null)}
 				/>
 			)}
 		</>

@@ -287,7 +287,10 @@ export default function ChatMessages({
 			<div className="space-y-4 max-w-4xl mx-auto">
 				{Object.entries(messageGroups).map(([date, dateMessages]) => (
 					<div key={date}>
-						<div className="flex justify-center mb-4 mt-5" style={{ marginTop: "0.5rem" }}>
+						<div
+							className="flex justify-center mb-4 mt-5"
+							style={{ marginTop: "0.5rem" }}
+						>
 							<div
 								className="bg-[#242F3D] px-3 py-1 rounded-full text-xs text-[#7D8E98]"
 								style={{ padding: "0.2rem" }}
@@ -313,6 +316,17 @@ export default function ChatMessages({
 									data-is-read={msg.isRead}
 									onContextMenu={(e) => {
 										handleContextMenu(e, msg.id, msg.content);
+									}}
+									onTouchEnd={(e) => {
+										if (e.changedTouches && e.changedTouches.length === 1) {
+											const touch = e.changedTouches[0];
+											setContextMenu({
+												messageId: msg.id,
+												messageContent: msg.content,
+												x: touch.clientX,
+												y: touch.clientY,
+											});
+										}
 									}}
 								>
 									<div
@@ -401,23 +415,24 @@ export default function ChatMessages({
 				<div ref={messagesEndRef} />
 			</div>
 
-			{contextMenu && (
+			{contextMenu &&
+				(() => {
+					const msg = messages.find((m) => m.id === contextMenu.messageId);
+					return (
 				<MessageContextMenu
 					x={contextMenu.x}
 					y={contextMenu.y}
 					onClose={() => setContextMenu(null)}
 					onDelete={() => handleDeleteMessage(contextMenu.messageId)}
 					onReply={() => {
-						const message = messages.find(
-							(m) => m.id === contextMenu.messageId
-						);
-						if (message) {
-							handleReplyToMessage(message);
-						}
+								if (msg) handleReplyToMessage(msg);
 					}}
 					messageContent={contextMenu.messageContent}
+							senderId={msg?.sender.id || ""}
+							currentUserId={currentUserId}
 				/>
-			)}
+					);
+				})()}
 		</div>
 	);
 }

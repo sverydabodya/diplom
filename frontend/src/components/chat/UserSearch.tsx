@@ -110,7 +110,7 @@ export default function UserSearch({ onChatCreated }: UserSearchProps) {
 				/>
 				{isLoading && (
 					<div className="absolute right-4 top-1/2 transform -translate-y-1/2">
-						<div className="w-5 h-5 border-2 border-[#2AABEE] border-t-transparent rounded-full animate-spin" />
+						
 					</div>
 				)}
 			</div>
@@ -173,7 +173,7 @@ export default function UserSearch({ onChatCreated }: UserSearchProps) {
 					>
 						{isCreatingChat ? (
 							<>
-								<div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+								
 								<span>Створення...</span>
 							</>
 						) : (

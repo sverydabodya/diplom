@@ -9,6 +9,7 @@ import {
 	searchUsers,
 } from "../../network/chat_api";
 import UserSearch from "./UserSearch";
+import ProfileModal from "../ProfileModal";
 
 interface Chat {
 	id: string;
@@ -28,7 +29,8 @@ interface ChatSidebarProps {
 	chats: Chat[];
 	selectedChat: Chat | null;
 	onChatSelect: (id: string) => void;
-	onUnreadCountUpdate?: () => void;
+	onCreateChat: (userIds: string[], name?: string) => Promise<any>;
+	onDeleteChat: (chatId: string) => Promise<void>;
 }
 
 function LoadingSpinner() {
@@ -42,12 +44,12 @@ function LoadingSpinner() {
 function CreateChatModal({
 	isOpen,
 	onClose,
-	onChatCreated,
+	onCreateChat,
 	chats,
 }: {
 	isOpen: boolean;
 	onClose: () => void;
-	onChatCreated: () => void;
+	onCreateChat: (userIds: string[], name?: string) => Promise<any>;
 	chats: Chat[];
 }) {
 	const [chatType, setChatType] = useState<"private" | "group">("private");
@@ -89,7 +91,7 @@ function CreateChatModal({
 					setIsCreating(false);
 					return;
 				}
-				await createChat([selectedUsers[0].id]);
+				await onCreateChat([selectedUsers[0].id]);
 			} else {
 				if (selectedUsers.length < 2) {
 					setError("Оберіть хоча б двох користувачів для групового чату");
@@ -101,14 +103,13 @@ function CreateChatModal({
 					setIsCreating(false);
 					return;
 				}
-				await createChat(
+				await onCreateChat(
 					selectedUsers.map((u) => u.id),
 					groupName.trim()
 				);
 			}
 			setSelectedUsers([]);
 			setGroupName("");
-			onChatCreated();
 			onClose();
 		} catch (e: any) {
 			setError(e.message || "Помилка створення чату");
@@ -119,82 +120,96 @@ function CreateChatModal({
 
 	if (!isOpen) return null;
 	return (
-		<div className="fixed left-0 top-0 w-screen h-screen bg-black bg-opacity-50 z-[9999] flex items-center justify-center p-2">
-			<div className="relative bg-[#242F3D] rounded-2xl shadow-2xl border border-[#2F3B4A] w-auto max-w-xs sm:max-w-md p-10 sm:p-14 overflow-y-auto max-h-[90vh] mb-6">
-				<button
-					onClick={onClose}
-					className="absolute top-2 right-2 sm:top-4 sm:right-4 text-[#7D8E98] hover:text-white text-2xl w-10 h-10 flex items-center justify-center rounded-full transition-colors duration-200 focus:outline-none"
-					aria-label="Закрити модалку"
+		<div className="fixed inset-0 z-50">
+			<div
+				className="fixed inset-0 bg-black bg-opacity-50"
+				onClick={onClose}
+				style={{ zIndex: 49 }}
+			/>
+			<div className="modal-center" style={{ zIndex: 50, padding: "1rem" }}>
+				<div
+					className="bg-[#242F3D] rounded-2xl shadow-2xl border border-[#2F3B4A] w-auto max-w-xs sm:max-w-md p-10 sm:p-14 overflow-y-auto max-h-[90vh] mb-6"
+					style={{ padding: "1rem" }}
 				>
-					✕
-				</button>
-				<h2 className="text-xl font-semibold text-white mb-4 text-center">
-					Створити новий чат
-				</h2>
-				<div className="mb-4 flex space-x-4 justify-center">
-					<button
-						className={`px-4 py-2 rounded-lg ${
-							chatType === "private"
-								? "bg-[#2AABEE] text-white"
-								: "bg-[#242F3D] text-[#B8C5D1] border border-[#2F3B4A]"
-						}`}
-						onClick={() => {
-							setChatType("private");
-							setGroupName("");
-						}}
-					>
-						Особистий
-					</button>
-					<button
-						className={`px-4 py-2 rounded-lg ${
-							chatType === "group"
-								? "bg-[#2AABEE] text-white"
-								: "bg-[#242F3D] text-[#B8C5D1] border border-[#2F3B4A]"
-						}`}
-						onClick={() => setChatType("group")}
-					>
-						Груповий
-					</button>
-				</div>
-				{chatType === "group" && (
-					<input
-						type="text"
-						value={groupName}
-						onChange={(e) => setGroupName(e.target.value)}
-						placeholder="Назва групи"
-						className="w-full px-4 py-2 mb-4 rounded-lg bg-[#17212B] border border-[#2F3B4A] text-white placeholder-[#7D8E98] focus:outline-none focus:border-[#2AABEE]"
+					<div className="flex items-center justify-between p-3 sm:p-4 border-b border-[#2F3B4A]">
+						<h2 className="text-base sm:text-lg font-semibold text-white">
+							Створення нового чату
+						</h2>
+						<button
+							onClick={onClose}
+							className="text-[#7D8E98] hover:text-white transition-colors duration-200"
+							style={{ marginLeft: ".5rem" }}
+						>
+							✕
+						</button>
+					</div>
+					<div className="mb-4 flex space-x-4 justify-center">
+						<button
+							className={`px-4 py-2 rounded-lg ${
+								chatType === "private"
+									? "bg-[#2AABEE] text-white"
+									: "bg-[#242F3D] text-[#B8C5D1] border border-[#2F3B4A]"
+							}`}
+							onClick={() => {
+								setChatType("private");
+								setGroupName("");
+							}}
+						>
+							Особистий
+						</button>
+						<button
+							className={`px-4 py-2 rounded-lg ${
+								chatType === "group"
+									? "bg-[#2AABEE] text-white"
+									: "bg-[#242F3D] text-[#B8C5D1] border border-[#2F3B4A]"
+							}`}
+							onClick={() => setChatType("group")}
+							style={{ marginLeft: ".5rem" }}
+						>
+							Груповий
+						</button>
+					</div>
+					{chatType === "group" && (
+						<input
+							type="text"
+							value={groupName}
+							onChange={(e) => setGroupName(e.target.value)}
+							placeholder="Назва групи"
+							className="w-full px-4 py-2 mb-4 rounded-lg bg-[#17212B] border border-[#2F3B4A] text-white placeholder-[#7D8E98] focus:outline-none focus:border-[#2AABEE]"
+						/>
+					)}
+					<UserSearchForModal
+						selectedUsers={selectedUsers}
+						onUserSelect={handleUserSelect}
+						onUserRemove={handleUserRemove}
+						disabled={isCreating}
+						chatType={chatType}
 					/>
-				)}
-				<UserSearchForModal
-					selectedUsers={selectedUsers}
-					onUserSelect={handleUserSelect}
-					onUserRemove={handleUserRemove}
-					disabled={isCreating}
-					chatType={chatType}
-				/>
-				{privateChatExists &&
-					chatType === "private" &&
-					selectedUsers.length === 1 && (
-						<div className="text-red-400 text-sm text-center mb-2">
-							Особистий чат з цим користувачем вже існує
+					{privateChatExists &&
+						chatType === "private" &&
+						selectedUsers.length === 1 && (
+							<div className="text-red-400 text-sm text-center mb-2">
+								Особистий чат з цим користувачем вже існує
+							</div>
+						)}
+					{error && (
+						<div className="mt-2 p-2 rounded bg-red-900 text-red-200 text-sm text-center">
+							{error}
 						</div>
 					)}
-				{error && (
-					<div className="mt-2 p-2 rounded bg-red-900 text-red-200 text-sm text-center">
-						{error}
-					</div>
-				)}
-				<button
-					onClick={handleCreate}
-					disabled={isCreating || privateChatExists}
-					className={`mt-4 w-full py-2 rounded-lg bg-[#2AABEE] text-white font-semibold hover:bg-[#229ED9] transition-all duration-200 ${
-						isCreating || privateChatExists
-							? "opacity-50 cursor-not-allowed"
-							: ""
-					}`}
-				>
-					{isCreating ? "Створення..." : "Створити"}
-				</button>
+					<button
+						onClick={handleCreate}
+						disabled={isCreating || privateChatExists}
+						className={`mt-4 w-full py-2 rounded-lg bg-[#2AABEE] text-white font-semibold hover:bg-[#229ED9] transition-all duration-200 ${
+							isCreating || privateChatExists
+								? "opacity-50 cursor-not-allowed"
+								: ""
+						}`}
+						style={{ marginTop: ".5rem" }}
+					>
+						{isCreating ? "Створення..." : "Створити"}
+					</button>
+				</div>
 			</div>
 		</div>
 	);
@@ -286,7 +301,8 @@ export default function ChatSidebar({
 	chats,
 	selectedChat,
 	onChatSelect,
-	onUnreadCountUpdate,
+	onCreateChat,
+	onDeleteChat,
 }: ChatSidebarProps) {
 	const { user, setUser } = useAuth();
 	const navigate = useNavigate();
@@ -295,6 +311,7 @@ export default function ChatSidebar({
 	const [sidebarWidth, setSidebarWidth] = useState(320);
 	const [unreadCounts, setUnreadCounts] = useState<UnreadCount[]>([]);
 	const [isCreateChatModalOpen, setIsCreateChatModalOpen] = useState(false);
+	const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
 	const isResizing = useRef(false);
 	const sidebarRef = useRef<HTMLDivElement>(null);
 	const startX = useRef(0);
@@ -317,12 +334,6 @@ export default function ChatSidebar({
 		const interval = setInterval(fetchUnreadCounts, 30000);
 		return () => clearInterval(interval);
 	}, []);
-
-	useEffect(() => {
-		if (onUnreadCountUpdate) {
-			onUnreadCountUpdate();
-		}
-	}, [chats, onUnreadCountUpdate]);
 
 	useEffect(() => {
 		if (!user) return;
@@ -349,10 +360,6 @@ export default function ChatSidebar({
 					}
 				};
 				fetchUnreadCounts();
-			} else if (data.type === "user_status_update") {
-				if (onUnreadCountUpdate) {
-					onUnreadCountUpdate();
-				}
 			}
 		};
 
@@ -361,7 +368,7 @@ export default function ChatSidebar({
 		return () => {
 			ws.close();
 		};
-	}, [user, onUnreadCountUpdate]);
+	}, [user]);
 
 	useEffect(() => {
 		const handleMouseMove = (e: MouseEvent) => {
@@ -428,7 +435,7 @@ export default function ChatSidebar({
 
 		setIsDeletingChat(chatId);
 		try {
-			await deleteChat(chatId);
+			await onDeleteChat(chatId);
 			if (selectedChat?.id === chatId) {
 				onChatSelect("home");
 			}
@@ -445,12 +452,6 @@ export default function ChatSidebar({
 		return count ? count.unreadCount : 0;
 	};
 
-	const handleChatCreated = () => {
-		if (onUnreadCountUpdate) {
-			onUnreadCountUpdate();
-		}
-	};
-
 	const isCreator = (chat: Chat) => {
 		if (!chat.name) return false;
 
@@ -465,8 +466,15 @@ export default function ChatSidebar({
 				<CreateChatModal
 					isOpen={isCreateChatModalOpen}
 					onClose={() => setIsCreateChatModalOpen(false)}
-					onChatCreated={handleChatCreated}
+					onCreateChat={onCreateChat}
 					chats={chats}
+				/>
+			)}
+
+			{isProfileModalOpen && (
+				<ProfileModal
+					isOpen={isProfileModalOpen}
+					onClose={() => setIsProfileModalOpen(false)}
 				/>
 			)}
 
@@ -499,7 +507,7 @@ export default function ChatSidebar({
 							🏠
 						</button>
 						<button
-							onClick={() => navigate("/profile")}
+							onClick={() => setIsProfileModalOpen(true)}
 							className="w-10 h-10 rounded-full bg-[#242F3D] hover:bg-[#2F3B4A] flex items-center justify-center transition-all duration-200 big-header-btn"
 							title="Мій профіль"
 							style={{ marginRight: "0.2rem" }}
@@ -558,7 +566,7 @@ export default function ChatSidebar({
 															? "text-white font-bold"
 															: "text-white"
 													}`}
-													style={{marginLeft: ".3rem"}}
+													style={{ marginLeft: ".3rem" }}
 												>
 													{chat.name
 														? chat.name
@@ -583,7 +591,7 @@ export default function ChatSidebar({
 														? "text-[#2AABEE] font-semibold"
 														: "text-[#7D8E98]"
 												}`}
-												style={{padding: ".3rem"}}
+												style={{ padding: ".3rem" }}
 											>
 												{getLastMessage(chat)}
 											</p>

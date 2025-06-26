@@ -7,6 +7,7 @@ import {
 	updateOnlineStatus,
 	deleteChat,
 	getUnreadCount,
+	createChat,
 } from "../network/chat_api";
 import ChatSidebar from "../components/chat/ChatSidebar";
 import ChatHeader from "../components/chat/ChatHeader";
@@ -326,10 +327,11 @@ export default function ChatPage() {
 
 	const handleDeleteChat = async (chatId: string) => {
 		try {
-			await deleteChat(chatId);
+			setChats((prev) => prev.filter((c) => c.id !== chatId));
 			if (selectedChat?.id === chatId) {
 				setSelectedChat(null);
 			}
+			await deleteChat(chatId);
 			updateChats();
 		} catch (error) {
 			console.error("Помилка при видаленні чату:", error);
@@ -433,6 +435,18 @@ export default function ChatPage() {
 		}
 	};
 
+	const handleCreateChat = async (userIds: string[], name?: string) => {
+		try {
+			const newChat = await createChat(userIds, name);
+			setChats((prev) => [newChat, ...prev]);
+			updateChats();
+			return newChat;
+		} catch (err) {
+			console.error("Помилка при створенні чату:", err);
+			throw err;
+		}
+	};
+
 	return (
 		<div className="flex h-screen bg-[#0E1621] text-white">
 			{/* Кнопка для відкриття/закриття меню на мобільних */}
@@ -455,7 +469,8 @@ export default function ChatPage() {
 						chats={chats}
 						selectedChat={selectedChat}
 						onChatSelect={openChat}
-						onUnreadCountUpdate={handleUnreadCountUpdate}
+						onDeleteChat={handleDeleteChat}
+						onCreateChat={handleCreateChat}
 					/>
 				</div>
 
@@ -472,7 +487,8 @@ export default function ChatPage() {
 					chats={chats}
 					selectedChat={selectedChat}
 					onChatSelect={openChat}
-					onUnreadCountUpdate={handleUnreadCountUpdate}
+					onDeleteChat={handleDeleteChat}
+					onCreateChat={handleCreateChat}
 				/>
 			</div>
 

@@ -3,6 +3,37 @@ import { RequestHandler } from "express";
 import { WebsocketRequestHandler } from "express-ws";
 import prisma from "../db";
 import WebSocket from "ws";
+import crypto from "crypto";
+
+const ENCRYPTION_KEY =
+	process.env.MESSAGE_SECRET_KEY || "default_secret_key_32bytes!"; // 32 bytes
+const IV_LENGTH = 16;
+
+function encrypt(text: string): string {
+	const iv = crypto.randomBytes(IV_LENGTH);
+	const cipher = crypto.createCipheriv(
+		"aes-256-cbc",
+		Buffer.from(ENCRYPTION_KEY),
+		iv
+	);
+	let encrypted = cipher.update(text);
+	encrypted = Buffer.concat([encrypted, cipher.final()]);
+	return iv.toString("hex") + ":" + encrypted.toString("hex");
+}
+
+function decrypt(text: string): string {
+	const textParts = text.split(":");
+	const iv = Buffer.from(textParts.shift()!, "hex");
+	const encryptedText = Buffer.from(textParts.join(":"), "hex");
+	const decipher = crypto.createDecipheriv(
+		"aes-256-cbc",
+		Buffer.from(ENCRYPTION_KEY),
+		iv
+	);
+	let decrypted = decipher.update(encryptedText);
+	decrypted = Buffer.concat([decrypted, decipher.final()]);
+	return decrypted.toString();
+}
 
 export const getChatById: RequestHandler = async (req, res, next) => {
 	const chatId = req.params.id;
@@ -190,7 +221,6 @@ export const sendMessage: WebsocketRequestHandler = async (ws, req) => {
 
 	await updateUserOnlineStatus(user.id, true);
 
-
 	ws.on("message", async (msg) => {
 		try {
 			const data = JSON.parse(msg.toString());
@@ -199,7 +229,7 @@ export const sendMessage: WebsocketRequestHandler = async (ws, req) => {
 			if (data.type === "message") {
 				// Звичайне повідомлення або відповідь
 				const messageData: any = {
-					content: data.content,
+					content: encrypt(data.content),
 					senderId: user.id,
 					chatRoomId: chatId,
 				};
@@ -231,9 +261,15 @@ export const sendMessage: WebsocketRequestHandler = async (ws, req) => {
 					},
 				});
 
+				// Розшифрування перед відправкою клієнтам
+				const messageToSend = {
+					...message,
+					content: decrypt(message.content),
+				};
+
 				const messageDataToSend = JSON.stringify({
 					type: "new_message",
-					message,
+					message: messageToSend,
 				});
 
 				chatClients[chatId].forEach((client: WebSocket) => {
@@ -423,7 +459,7 @@ export const createChat: RequestHandler = async (req, res) => {
 				},
 			});
 
-			if (existingChat._count.users <= 2) {
+			if (existingChat && existingChat._count.users <= 2) {
 				return res.json(existingChat);
 			}
 

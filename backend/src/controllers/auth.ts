@@ -1,6 +1,7 @@
 import { RequestHandler } from "express";
 import prisma from "../db";
 import { SessionUser } from "../types/SessionUser";
+import bcrypt from "bcrypt";
 
 export const getAuthUser: RequestHandler = async (req, res, next) => {
 	if (req.session.user) {
@@ -16,10 +17,11 @@ export const signUp: RequestHandler = async (req, res, next) => {
 	const pass = req.body.pass;
 
 	try {
+		const hashedPassword = await bcrypt.hash(pass, 10);
 		const user = await prisma.user.create({
 			data: {
 				email,
-				password: pass,
+				password: hashedPassword,
 				name,
 			},
 		});
@@ -28,6 +30,7 @@ export const signUp: RequestHandler = async (req, res, next) => {
 			const sessionUser: SessionUser = {
 				id: user.id,
 				name: user.name,
+				email: user.email,
 				chats: [],
 			};
 
@@ -51,7 +54,6 @@ export const signIn: RequestHandler = async (req, res, next) => {
 		const user = await prisma.user.findFirst({
 			where: {
 				email,
-				password: pass,
 			},
 			include: {
 				chatRooms: {
@@ -62,10 +64,11 @@ export const signIn: RequestHandler = async (req, res, next) => {
 			},
 		});
 
-		if (user) {
+		if (user && (await bcrypt.compare(pass, user.password))) {
 			const sessionUser: SessionUser = {
 				id: user.id,
 				name: user.name,
+				email: user.email,
 				chats: user.chatRooms.map((chat) => {
 					return chat.id;
 				}),
